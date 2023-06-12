@@ -70,7 +70,6 @@ class BallAndStick(Cell):
             seg.pas.g = 0.001  # Passive conductance in S/cm2
             seg.pas.e = -65    # Leak reversal potential mV
 
-
 def create_n_BallAndStick(n, r):
     """n = number of cells; r = radius of circle"""
     cells = []
