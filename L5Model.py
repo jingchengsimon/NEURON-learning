@@ -30,6 +30,8 @@ def alter_swc(file,old_str,new_str):
             if line.startswith("#"):
                 continue
             line_s = line.split()
+            if line_s[1] == '16' or line_s[1] == '18':
+                continue
             if line_s[1] == old_str:
                 line = line.replace(old_str,new_str)
             file_data += line
@@ -76,17 +78,21 @@ class L5Model(Cell):
 
     def _setup_biophysics(self):
         for sec in self.all:
+            # Axial resistance in Ohm * cm
             sec.insert('pas')  
-            sec.Ra = 100    # Axial resistance in Ohm * cm
+            sec.Ra = 100    
+
+            # Membrane conductance
             if ('soma' in sec.hname()) or ('axon' in sec.hname()):
                 sec.cm = 1
             else:
                 sec.cm = 2
+            
+            # Leak reversal potential mV
             for seg in sec:
                 # seg.pas.g = 0.001  # Passive conductance in S/cm2
-                seg.pas.e = -90   # Leak reversal potential mV
-            # print('L5Model' in sec.hname())
-            # print('L5Model' in str(sec))
+                seg.pas.e = -90    
+
             # print(sec.psection())
             # print("type(sec) = {}".format(type(sec)))
     
@@ -99,6 +105,9 @@ s = h.Shape()
 
 ## Visualize
 h.PlotShape(True).plot(plt)
+plt.xlabel('x')
+plt.ylabel('y')
+# plt.zlabel('z') # does not work
 # ps = h.PlotShape(True)
 # ps.show(0)
 
@@ -116,7 +125,7 @@ v = h.Vector().record(soma(0.5)._ref_v)             # Membrane potential vector
 t = h.Vector().record(h._ref_t)                     # Time stamp vector
 amp = h.Vector().record(ic._ref_i)
 
-h.finitialize(-90 * mV)
+h.finitialize(-90 * mV) #
 h.continuerun(30 * ms)
 
 ## Visualize
